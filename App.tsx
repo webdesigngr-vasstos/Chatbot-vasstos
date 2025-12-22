@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   MessageSquare, 
@@ -18,7 +18,8 @@ import {
   FileCode,
   Sparkles,
   Github,
-  Command
+  Command,
+  ArrowDown
 } from 'lucide-react';
 import { Role, Message, Language } from './types';
 import { geminiService } from './services/gemini';
@@ -45,6 +46,7 @@ const App: React.FC = () => {
   const [ghUser, setGhUser] = useState('vasstos-tech');
   const [ghRepo, setGhRepo] = useState('chatbot-ai');
   const [lang, setLang] = useState<Language>('pt');
+  const [showScrollButton, setShowScrollButton] = useState(false);
   const t = I18N[lang];
 
   const scriptUrl = `https://${ghUser}.github.io/${ghRepo}/index.js`;
@@ -59,17 +61,57 @@ const App: React.FC = () => {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToBottom = useCallback((smooth = true) => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ 
+        behavior: smooth ? 'smooth' : 'auto',
+        block: 'end'
+      });
+    }
+  }, []);
+
+  // Monitora o scroll para mostrar o botão de voltar ao topo/fim
+  const handleScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+      const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
+      setShowScrollButton(!isAtBottom);
+    }
   };
 
+  // Scroll automático quando mensagens mudam ou carregamento inicia/termina
   useEffect(() => {
     if (isOpen) {
-      setTimeout(scrollToBottom, 100);
+      // Disparo imediato
+      scrollToBottom();
+      // Disparo após um pequeno delay para garantir que animações de entrada terminaram
+      const timer = setTimeout(() => scrollToBottom(), 250);
+      return () => clearTimeout(timer);
     }
-  }, [messages, isLoading, isOpen]);
+  }, [messages, isLoading, isOpen, scrollToBottom]);
+
+  // Observer para detectar mudanças de tamanho no conteúdo do chat (ex: imagens ou textos longos renderizando)
+  useEffect(() => {
+    if (!scrollContainerRef.current) return;
+    
+    const resizeObserver = new ResizeObserver(() => {
+      // Só auto-scrolla se o usuário já estiver perto do fundo
+      const container = scrollContainerRef.current;
+      if (container) {
+        const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 150;
+        if (isNearBottom) {
+          scrollToBottom();
+        }
+      }
+    });
+
+    resizeObserver.observe(scrollContainerRef.current);
+    return () => resizeObserver.disconnect();
+  }, [scrollToBottom]);
 
   useEffect(() => {
     if (messages.length === 1 && messages[0].id === 'welcome') {
@@ -173,7 +215,7 @@ const App: React.FC = () => {
               initial={{ scale: 0.9, opacity: 0, y: 30 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 30 }}
-              className="bg-slate-900 border border-white/10 rounded-[2.5rem] max-w-5xl w-full shadow-2xl max-h-[90vh] overflow-hidden flex flex-col"
+              className="bg-slate-900 border border-white/10 rounded-[2.5rem] max-w-4xl w-full shadow-2xl max-h-[90vh] overflow-hidden flex flex-col"
             >
               <div className="p-6 md:p-8 border-b border-white/5 flex justify-between items-center bg-white/2">
                 <div className="flex items-center gap-4">
@@ -355,9 +397,9 @@ const App: React.FC = () => {
             initial={{ opacity: 0, y: 40, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 40, scale: 0.95 }}
-            className="pointer-events-auto flex flex-col w-full max-w-[95vw] md:max-w-[400px] h-[85vh] max-h-[680px] bg-slate-900/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden mb-20 md:mb-24"
+            className="pointer-events-auto flex flex-col w-full max-w-[95vw] md:max-w-[400px] h-[85vh] max-h-[680px] bg-slate-900/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden mb-20 md:mb-24 relative"
           >
-            <header className="px-6 py-5 flex items-center justify-between border-b border-white/5 bg-gradient-to-b from-white/5 to-transparent">
+            <header className="px-6 py-5 flex items-center justify-between border-b border-white/5 bg-gradient-to-b from-white/5 to-transparent shrink-0">
               <div className="flex items-center gap-4">
                 <div className="relative">
                   <div className="bg-blue-600 p-1.5 rounded-2xl shadow-lg shadow-blue-900/40 text-white w-10 h-10 flex items-center justify-center">
@@ -402,7 +444,11 @@ const App: React.FC = () => {
               </div>
             </header>
 
-            <div className="flex-1 overflow-y-auto p-5 scrollbar-hide space-y-6">
+            <div 
+              ref={scrollContainerRef}
+              onScroll={handleScroll}
+              className="flex-1 overflow-y-auto p-5 scrollbar-hide space-y-6 relative"
+            >
               {messages.map((msg) => (
                 <ChatMessage key={msg.id} message={msg} lang={lang} />
               ))}
@@ -447,10 +493,25 @@ const App: React.FC = () => {
                 )}
               </AnimatePresence>
               
-              <div ref={messagesEndRef} className="h-2" />
+              <div ref={messagesEndRef} className="h-4 w-full" />
             </div>
 
-            <footer className="p-5 border-t border-white/5 bg-gradient-to-t from-white/5 to-transparent">
+            {/* Floating Scroll-to-Bottom Button */}
+            <AnimatePresence>
+              {showScrollButton && (
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.8, y: 10 }}
+                  onClick={() => scrollToBottom()}
+                  className="absolute bottom-[110px] right-6 p-3 bg-blue-600 text-white rounded-full shadow-2xl border border-white/10 hover:bg-blue-500 transition-colors z-20 flex items-center justify-center"
+                >
+                  <ArrowDown size={18} />
+                </motion.button>
+              )}
+            </AnimatePresence>
+
+            <footer className="p-5 border-t border-white/5 bg-gradient-to-t from-white/5 to-transparent shrink-0">
               <div className="flex gap-2 mb-4 overflow-x-auto pb-1 scrollbar-hide">
                 {t.quickPrompts.slice(0, 3).map((prompt, i) => (
                   <button
