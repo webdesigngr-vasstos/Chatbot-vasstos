@@ -1,0 +1,7 @@
+{
+  "name": "Vasstos AI Assistente",
+  "description": "Assistente de IA sofisticado para vasstos.com, oferecendo insights sobre serviços e soluções usando Gemini 3 Flash.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
