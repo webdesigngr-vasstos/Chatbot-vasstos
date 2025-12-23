@@ -11,12 +11,14 @@ import {
   Check,
   Terminal,
   Layout,
-  FileCode,
   Github,
   Monitor,
   Trash2,
   FlaskConical,
-  Sparkles
+  Sparkles,
+  Lock,
+  Unlock,
+  ShieldCheck
 } from 'lucide-react';
 import { Role, Message, Language } from './types';
 import { geminiService } from './services/gemini';
@@ -39,8 +41,10 @@ const App: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showInstallGuide, setShowInstallGuide] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
-  const [activeTab, setActiveTab] = useState<'googlesites' | 'github' | 'test'>('test');
+  const [isAdmin, setIsAdmin] = useState(() => localStorage.getItem('vasstos_admin_active') === 'true');
+  const [activeTab, setActiveTab] = useState<'googlesites' | 'github' | 'test'>('googlesites');
   const [copied, setCopied] = useState(false);
+  const [logoClicks, setLogoClicks] = useState(0);
   
   const [ghUser, setGhUser] = useState(() => localStorage.getItem('vasstos_gh_user') || 'vasstos-tech');
   const [ghRepo, setGhRepo] = useState(() => localStorage.getItem('vasstos_gh_repo') || 'Chatbot-vasstos');
@@ -76,7 +80,19 @@ const App: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('vasstos_gh_user', ghUser);
     localStorage.setItem('vasstos_gh_repo', ghRepo);
-  }, [ghUser, ghRepo]);
+    localStorage.setItem('vasstos_admin_active', isAdmin.toString());
+  }, [ghUser, ghRepo, isAdmin]);
+
+  const handleLogoClick = () => {
+    const newClicks = logoClicks + 1;
+    setLogoClicks(newClicks);
+    if (newClicks >= 3) {
+      setIsAdmin(!isAdmin);
+      setLogoClicks(0);
+      if (!isAdmin) setShowInstallGuide(true);
+    }
+    setTimeout(() => setLogoClicks(0), 2000);
+  };
 
   const scrollToBottom = useCallback((smooth = true) => {
     if (messagesEndRef.current) {
@@ -133,49 +149,25 @@ const App: React.FC = () => {
 
   const clearHistory = () => {
     if (window.confirm(lang === 'pt' ? 'Limpar histórico de conversa?' : 'Clear chat history?')) {
-      const welcome = { id: 'welcome', role: Role.ASSISTANT, content: t.welcome, timestamp: new Date() };
-      setMessages([welcome]);
+      setMessages([{ id: 'welcome', role: Role.ASSISTANT, content: t.welcome, timestamp: new Date() }]);
       localStorage.removeItem('vasstos_chat_history');
     }
   };
 
-  const simulateTestResponse = () => {
-    setIsLoading(true);
-    setIsOpen(true);
-    setShowInstallGuide(false);
-    setTimeout(() => {
-      setMessages(prev => [...prev, {
-        id: Date.now().toString(),
-        role: Role.ASSISTANT,
-        content: t.simulationMsg,
-        timestamp: new Date(),
-        sources: [
-          { title: "Vasstos Cloud", uri: "https://www.vasstos.com/cloud" },
-          { title: "Vasstos IA Solutions", uri: "https://www.vasstos.com/ai" }
-        ]
-      }]);
-      setIsLoading(false);
-    }, 1200);
-  };
-
-  const googleSitesSnippet = `<!-- Vasstos Chatbot Integration -->
-<div id="vasstos-root"></div>
-<style>
-  #vasstos-root { position: fixed; bottom: 0; right: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999999; }
-  #vasstos-root > * { pointer-events: auto; }
-</style>
-<script type="module" src="${scriptUrl}"></script>`;
-
-  const instantTestSnippet = `(function() {
-  const root = document.createElement('div');
-  root.id = 'vasstos-chat-test';
-  document.body.appendChild(root);
-  const script = document.createElement('script');
-  script.type = 'module';
-  script.src = '${scriptUrl}';
-  document.head.appendChild(script);
-  console.log('🚀 Chatbot Vasstos inicializado via console.');
-})();`;
+  const prodSnippet = `<!-- Vasstos Chatbot Public Integration -->
+<script type="module">
+  (function() {
+    if (!document.getElementById('vasstos-chatbot-container')) {
+      const container = document.createElement('div');
+      container.id = 'root'; // O React monta no #root por padrão
+      document.body.appendChild(container);
+    }
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.src = '${scriptUrl}';
+    document.head.appendChild(script);
+  })();
+</script>`;
 
   const copyToClipboard = (code: string) => {
     navigator.clipboard.writeText(code);
@@ -188,7 +180,7 @@ const App: React.FC = () => {
       
       {/* Simulation Frame */}
       <AnimatePresence>
-        {isPreviewMode && (
+        {isPreviewMode && isAdmin && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 pointer-events-auto bg-slate-950 z-[-1]">
             <iframe src="https://www.vasstos.com" className="w-full h-full border-none opacity-40 blur-[1px]" title="Vasstos Live Preview" />
             <div className="absolute top-8 left-8 flex items-center gap-4 bg-blue-600/20 backdrop-blur-xl px-6 py-3 rounded-2xl border border-blue-500/30 shadow-2xl">
@@ -202,15 +194,15 @@ const App: React.FC = () => {
 
       {/* Deployment Modal */}
       <AnimatePresence>
-        {showInstallGuide && (
+        {showInstallGuide && isAdmin && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 pointer-events-auto bg-slate-950/90 backdrop-blur-2xl z-[100] flex items-center justify-center p-4">
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-slate-900 border border-white/10 rounded-[2.5rem] max-w-4xl w-full shadow-2xl max-h-[85vh] overflow-hidden flex flex-col">
               <div className="p-8 border-b border-white/5 flex justify-between items-center bg-white/2">
                 <div className="flex items-center gap-4">
                   <div className="p-3 bg-blue-600/10 rounded-2xl text-blue-500 border border-blue-500/20"><Terminal size={24} /></div>
                   <div>
-                    <h2 className="text-xl font-bold text-white tracking-tight">Setup de Integração Vasstos</h2>
-                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Versionamento & Deploy v3.0</p>
+                    <h2 className="text-xl font-bold text-white tracking-tight">Console de Publicação Vasstos</h2>
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Configuração de Produção</p>
                   </div>
                 </div>
                 <button onClick={() => setShowInstallGuide(false)} className="p-2 hover:bg-white/5 rounded-full text-slate-400 transition-colors"><X size={24} /></button>
@@ -218,61 +210,43 @@ const App: React.FC = () => {
 
               <div className="flex-1 overflow-y-auto p-8 space-y-8 scrollbar-hide">
                 <div className="flex gap-2 p-1 bg-black/40 rounded-2xl border border-white/5 w-fit">
-                  <button onClick={() => setActiveTab('test')} className={cn("flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all", activeTab === 'test' ? "bg-purple-600 text-white shadow-lg shadow-purple-900/40" : "text-slate-500 hover:text-slate-300")}>
-                    <FlaskConical size={14} /> 1. Testar
-                  </button>
                   <button onClick={() => setActiveTab('googlesites')} className={cn("flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all", activeTab === 'googlesites' ? "bg-blue-600 text-white shadow-lg shadow-blue-900/40" : "text-slate-500 hover:text-slate-300")}>
-                    <Layout size={14} /> 2. Publicar
+                    <Layout size={14} /> 1. Código Público
                   </button>
                   <button onClick={() => setActiveTab('github')} className={cn("flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all", activeTab === 'github' ? "bg-slate-700 text-white shadow-lg shadow-slate-900/40" : "text-slate-500 hover:text-slate-300")}>
                     <Github size={14} /> Repositório
                   </button>
                 </div>
 
-                {activeTab === 'test' && (
-                  <div className="space-y-6 animate-in fade-in duration-500">
-                    <div className="bg-purple-600/10 p-8 rounded-[2rem] border border-purple-500/20 text-center space-y-4">
-                      <div className="w-16 h-16 bg-purple-600/20 rounded-full flex items-center justify-center mx-auto text-purple-400 border border-purple-500/30">
-                        <FlaskConical size={32} />
-                      </div>
-                      <h3 className="text-lg font-bold text-white">Teste Instantâneo no Site Real</h3>
-                      <p className="text-sm text-slate-400 max-w-md mx-auto">Copie o código abaixo, abra o site da Vasstos, aperte F12 e cole no Console para ver o bot funcionando agora.</p>
-                      <div className="relative group">
-                        <pre className="bg-black/60 p-6 rounded-2xl border border-purple-500/30 font-mono text-[11px] text-purple-300 text-left overflow-x-auto">
-                          {instantTestSnippet}
-                        </pre>
-                        <button onClick={() => copyToClipboard(instantTestSnippet)} className="absolute top-4 right-4 p-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl shadow-xl transition-all flex items-center gap-2 text-[10px] font-black uppercase">
-                          {copied ? <Check size={14}/> : <Copy size={14}/>} {copied ? 'Copiado' : 'Copiar Script'}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
                 {activeTab === 'googlesites' && (
                   <div className="space-y-6 animate-in fade-in duration-500">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div className="space-y-4">
                         <h4 className="text-xs font-bold text-white uppercase tracking-widest flex items-center gap-2">
-                          <Terminal size={16} className="text-blue-500" /> Snippet de Integração
+                          <ShieldCheck size={16} className="text-green-500" /> Snippet de Produção
                         </h4>
+                        <p className="text-[11px] text-slate-400">Este código funciona em qualquer site (Google Sites, WordPress, HTML Puro).</p>
                         <div className="relative group">
                           <pre className="bg-black/60 p-6 rounded-2xl border border-white/5 font-mono text-[11px] text-blue-300 h-[220px] overflow-y-auto">
-                            {googleSitesSnippet}
+                            {prodSnippet}
                           </pre>
-                          <button onClick={() => copyToClipboard(googleSitesSnippet)} className="absolute top-4 right-4 p-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl shadow-xl transition-all">
+                          <button onClick={() => copyToClipboard(prodSnippet)} className="absolute top-4 right-4 p-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl shadow-xl transition-all">
                             {copied ? <Check size={16}/> : <Copy size={16}/>}
                           </button>
                         </div>
                       </div>
                       <div className="bg-white/5 p-6 rounded-3xl border border-white/5 space-y-4">
-                        <h4 className="text-xs font-bold text-white uppercase tracking-widest">Passo a Passo</h4>
-                        <ol className="space-y-3 text-[11px] text-slate-400">
-                          <li className="flex gap-3"><span className="text-blue-500 font-bold">01.</span> No Google Sites, clique em 'Incorporar'.</li>
-                          <li className="flex gap-3"><span className="text-blue-500 font-bold">02.</span> Escolha a aba 'Incorporar código'.</li>
-                          <li className="flex gap-3"><span className="text-blue-500 font-bold">03.</span> Cole o snippet acima e salve.</li>
-                          <li className="flex gap-3"><span className="text-blue-500 font-bold">04.</span> Redimensione o bloco para o tamanho total da página.</li>
-                        </ol>
+                        <h4 className="text-xs font-bold text-white uppercase tracking-widest">Status Público</h4>
+                        <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-2xl">
+                          <div className="flex items-center gap-3 text-green-400 font-bold text-xs mb-2">
+                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                            Bot Ativo em Produção
+                          </div>
+                          <p className="text-[10px] text-slate-400 leading-relaxed">O script está apontando para o seu GitHub Pages. Qualquer alteração que você fizer aqui e der 'Push' no GitHub será refletida automaticamente em todos os sites que usam o snippet.</p>
+                        </div>
+                        <button onClick={() => setIsAdmin(false)} className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-bold uppercase rounded-xl border border-white/10 transition-all flex items-center justify-center gap-2">
+                          <Lock size={14} /> Sair do Modo Admin
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -281,12 +255,12 @@ const App: React.FC = () => {
                 {activeTab === 'github' && (
                   <div className="grid grid-cols-2 gap-6 animate-in fade-in duration-500">
                     <div className="bg-white/5 p-6 rounded-3xl border border-white/5 space-y-4">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Proprietário GitHub</label>
-                      <input type="text" value={ghUser} onChange={(e) => setGhUser(e.target.value)} className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-blue-500/50 outline-none" />
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Usuário/Org GitHub</label>
+                      <input type="text" value={ghUser} onChange={(e) => setGhUser(e.target.value)} className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-sm text-white outline-none" />
                     </div>
                     <div className="bg-white/5 p-6 rounded-3xl border border-white/5 space-y-4">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Nome do Repositório</label>
-                      <input type="text" value={ghRepo} onChange={(e) => setGhRepo(e.target.value)} className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-blue-500/50 outline-none" />
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Repositório</label>
+                      <input type="text" value={ghRepo} onChange={(e) => setGhRepo(e.target.value)} className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-sm text-white outline-none" />
                     </div>
                   </div>
                 )}
@@ -299,11 +273,11 @@ const App: React.FC = () => {
       {/* Main Chat Interface */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div initial={{ opacity: 0, y: 40, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 40, scale: 0.95 }} className="pointer-events-auto flex flex-col w-full max-w-[95vw] md:max-w-[420px] h-[85vh] max-h-[720px] bg-slate-900/90 backdrop-blur-3xl border border-white/10 rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)] overflow-hidden mb-20 md:mb-24">
+          <motion.div initial={{ opacity: 0, y: 40, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 40, scale: 0.95 }} className="pointer-events-auto flex flex-col w-full max-w-[95vw] md:max-w-[420px] h-[85vh] max-h-[720px] bg-slate-900/90 backdrop-blur-3xl border border-white/10 rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)] overflow-hidden mb-20 md:mb-24 relative">
             <header className="px-8 py-6 flex items-center justify-between border-b border-white/5 bg-gradient-to-b from-white/5 to-transparent shrink-0">
               <div className="flex items-center gap-4">
-                <div className="relative group">
-                  <div className="bg-blue-600 p-2 rounded-2xl shadow-lg shadow-blue-900/40 text-white w-11 h-11 flex items-center justify-center transition-transform group-hover:scale-105">
+                <div className="relative group cursor-pointer" onClick={handleLogoClick}>
+                  <div className="bg-blue-600 p-2 rounded-2xl shadow-lg shadow-blue-900/40 text-white w-11 h-11 flex items-center justify-center transition-transform group-hover:scale-105 active:scale-90">
                     <VasstosLogo className="w-7 h-7" />
                   </div>
                   <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-4 border-slate-900 rounded-full shadow-lg" />
@@ -317,9 +291,13 @@ const App: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-1.5">
-                <button onClick={() => setIsPreviewMode(!isPreviewMode)} className={cn("p-2.5 rounded-xl transition-all", isPreviewMode ? "bg-blue-600 text-white shadow-lg shadow-blue-900/40" : "hover:bg-white/5 text-slate-400")} title="Preview Live"><Monitor size={18} /></button>
+                {isAdmin && (
+                  <>
+                    <button onClick={() => setIsPreviewMode(!isPreviewMode)} className={cn("p-2.5 rounded-xl transition-all", isPreviewMode ? "bg-blue-600 text-white shadow-lg shadow-blue-900/40" : "hover:bg-white/5 text-slate-400")} title="Preview Live"><Monitor size={18} /></button>
+                    <button onClick={() => setShowInstallGuide(true)} className="p-2.5 hover:bg-white/5 rounded-xl text-slate-400 hover:text-white transition-all"><Settings size={18} /></button>
+                  </>
+                )}
                 <button onClick={clearHistory} className="p-2.5 hover:bg-white/5 rounded-xl text-slate-400 hover:text-red-400 transition-all" title="Limpar Conversa"><Trash2 size={18} /></button>
-                <button onClick={() => setShowInstallGuide(true)} className="p-2.5 hover:bg-white/5 rounded-xl text-slate-400 hover:text-white transition-all"><Settings size={18} /></button>
                 <button onClick={() => setIsOpen(false)} className="p-2.5 hover:bg-white/5 rounded-xl text-slate-400"><ChevronDown size={22} /></button>
               </div>
             </header>
@@ -363,17 +341,47 @@ const App: React.FC = () => {
                   <Send size={18} />
                 </button>
               </div>
-              <p className="text-center text-[8px] text-slate-600 mt-5 font-black uppercase tracking-[0.3em]">{t.footer}</p>
+              <div className="mt-4 flex items-center justify-between px-2">
+                 <p className="text-[8px] text-slate-600 font-black uppercase tracking-[0.2em]">{t.footer}</p>
+                 <span className="text-[7px] text-slate-700 uppercase tracking-widest flex items-center gap-1 cursor-default hover:text-slate-500 transition-colors">
+                   <ShieldCheck size={8} /> Privacidade & Termos
+                 </span>
+              </div>
             </footer>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setIsOpen(!isOpen)} className={cn("pointer-events-auto relative flex items-center justify-center w-16 h-16 rounded-[1.8rem] shadow-2xl transition-all duration-500 z-[100]", isOpen ? "bg-slate-800 text-white rotate-180" : "bg-blue-600 text-white shadow-blue-900/40")}>
+      <motion.button
+        initial={false}
+        animate={isOpen ? { scale: 0.9, rotate: 0 } : { scale: 1, rotate: 0 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          "pointer-events-auto relative flex items-center justify-center w-16 h-16 rounded-[1.8rem] shadow-2xl transition-all duration-500 z-[100] group",
+          isOpen ? "bg-slate-800 text-white" : "bg-blue-600 text-white shadow-blue-900/40"
+        )}
+      >
+        {!isOpen && (
+          <motion.div 
+            animate={{ scale: [1, 1.2, 1], opacity: [0, 0.5, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="absolute inset-0 bg-blue-400 rounded-[1.8rem]"
+          />
+        )}
         <AnimatePresence mode="wait">
-          {isOpen ? <motion.div key="c"><X size={28} /></motion.div> : <motion.div key="o"><MessageSquare size={28} fill="currentColor" /></motion.div>}
+          {isOpen ? (
+            <motion.div key="c" initial={{ opacity: 0, rotate: -90 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: 90 }}><X size={28} /></motion.div>
+          ) : (
+            <motion.div key="o" initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.5 }}><MessageSquare size={28} fill="currentColor" /></motion.div>
+          )}
         </AnimatePresence>
-        {!isOpen && <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 border-4 border-slate-950 rounded-full" />}
+        {!isOpen && isAdmin && (
+          <div className="absolute -top-1 -right-1 w-5 h-5 bg-purple-600 border-4 border-slate-950 rounded-full flex items-center justify-center">
+            <Unlock size={8} className="text-white" />
+          </div>
+        )}
       </motion.button>
     </div>
   );

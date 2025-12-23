@@ -24,24 +24,24 @@ export const I18N = {
       "Managed IT Services"
     ],
     welcome: "Greetings from Vasstos. I am your AI Concierge. How can I facilitate your digital evolution today?",
-    placeholder: "Type your inquiry here...",
+    placeholder: "Type your message here...",
     systemOnline: "Concierge Online",
     concierge: "Concierge",
     liveSupport: "Intelligent Business Support",
-    sources: "Knowledge Base",
+    sources: "Official Documentation",
     typing: "Concierge is thinking",
     error: "I encountered a minor synchronization issue. Please repeat your last message.",
     quickPrompts: [
       "Our Services",
       "Cloud Strategy",
       "AI Consulting",
-      "Contact Vasstos"
+      "Speak to Expert"
     ],
-    footer: "Secure Vasstos Gateway • Gemini v3 Engine",
-    instantTest: "Developer Console",
-    testInstructions: "Execute this script in your browser console to preview the live integration.",
-    simulateUI: "Test UI Flow",
-    simulationMsg: "Protocol test complete. This illustrates our grounded response system with interactive references."
+    footer: "Secure Gateway • Vasstos AI v3",
+    instantTest: "Production Setup",
+    testInstructions: "This code is ready for your website. It automatically handles container creation.",
+    simulateUI: "Test Live",
+    simulationMsg: "Production protocol active. This illustrates our grounded response system with live business references."
   },
   pt: {
     tagline: "Impulsionando a Evolução Digital",
@@ -59,19 +59,19 @@ export const I18N = {
     systemOnline: "Concierge Ativo",
     concierge: "Concierge",
     liveSupport: "Suporte Inteligente Corporativo",
-    sources: "Base de Conhecimento",
+    sources: "Documentação Oficial",
     typing: "Concierge está processando",
     error: "Houve uma pequena instabilidade na conexão. Por favor, reenvie sua mensagem.",
     quickPrompts: [
       "Nossos Serviços",
       "Estratégia Nuvem",
       "Consultoria em IA",
-      "Falar com Vasstos"
+      "Falar com Especialista"
     ],
-    footer: "Vasstos Secure Gateway • Gemini v3 Flash",
-    instantTest: "Console do Desenvolvedor",
-    testInstructions: "Execute este script no console do seu navegador para testar a integração ao vivo.",
-    simulateUI: "Simular Fluxo",
-    simulationMsg: "Teste de protocolo concluído. Isto exemplifica nosso sistema de resposta segura com referências dinâmicas."
+    footer: "Conexão Segura • Vasstos AI v3",
+    instantTest: "Setup de Produção",
+    testInstructions: "Este código está pronto para o seu site. Ele cria automaticamente o container necessário.",
+    simulateUI: "Testar ao Vivo",
+    simulationMsg: "Protocolo de produção ativo. Isto exemplifica nosso sistema de resposta segura com referências corporativas reais."
   }
 };
