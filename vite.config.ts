@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: './', // Garante que o script funcione em qualquer subpasta do GitHub Pages
+  base: '/Chatbot-vasstos/', // O nome EXATO do seu repositório
   build: {
     outDir: 'dist',
     rollupOptions: {
