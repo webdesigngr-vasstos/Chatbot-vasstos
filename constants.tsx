@@ -4,7 +4,7 @@ import { Language } from './types';
 export const VASSTOS_BRAND = {
   name: "Vasstos",
   primaryColor: "#3b82f6",
-  logoUri: "https://www.vasstos.com/favicon.ico", // Placeholder logo URI
+  logoUri: "https://www.vasstos.com/favicon.ico",
   contacts: {
     email: "info@vasstos.com",
     website: "https://www.vasstos.com"
@@ -37,7 +37,11 @@ export const I18N = {
       "How can Vasstos help with AI?",
       "How do I contact support?"
     ],
-    footer: "Powered by Gemini 3 Flash • Secure & Grounded Results"
+    footer: "Powered by Gemini 3 Flash • Secure & Grounded Results",
+    instantTest: "Instant Test",
+    testInstructions: "Run this in your browser console on the target site to preview the bot live.",
+    simulateUI: "Simulate UI Response",
+    simulationMsg: "This is a simulated response to test layout and animations."
   },
   pt: {
     tagline: "Impulsionando a Evolução Digital",
@@ -64,6 +68,10 @@ export const I18N = {
       "Como a Vasstos ajuda com IA?",
       "Como entro em contato com o suporte?"
     ],
-    footer: "Desenvolvido por Gemini 3 Flash • Resultados Seguros e Grounded"
+    footer: "Desenvolvido por Gemini 3 Flash • Resultados Seguros e Grounded",
+    instantTest: "Teste Instantâneo",
+    testInstructions: "Execute isto no console do seu navegador no site de destino para ver o bot ao vivo agora.",
+    simulateUI: "Simular Resposta (Teste de UI)",
+    simulationMsg: "Esta é uma resposta simulada para testar o layout, as fontes e as animações do chat."
   }
 };
