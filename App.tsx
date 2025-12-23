@@ -46,7 +46,7 @@ const App: React.FC = () => {
   const [logoClicks, setLogoClicks] = useState(0);
   
   const [ghUser, setGhUser] = useState(() => localStorage.getItem('vasstos_gh_user') || 'vasstos-tech');
-  const [ghRepo, setGhRepo] = useState(() => localStorage.getItem('vasstos_gh_repo') || 'Chatbot-vasstos');
+  const [ghRepo, setGhRepo] = useState(() => localStorage.getItem('vasstos_gh_repo') || 'chatbot-ai');
   
   const [lang, setLang] = useState<Language>(() => (localStorage.getItem('vasstos_lang') as Language) || 'pt');
   const t = I18N[lang];

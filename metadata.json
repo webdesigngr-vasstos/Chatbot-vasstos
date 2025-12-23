@@ -1,5 +1,5 @@
 {
-  "name": "Vasstos AI Assistente",
-  "description": "Assistente de IA sofisticado para vasstos.com, oferecendo insights sobre serviços e soluções usando Gemini 3 Flash.",
+  "name": "Chatbot AI - Vasstos Academy",
+  "description": "Consultor Acadêmico inteligente para a Academia de Formação Profissional Vasstos, integrando orientações de carreira e cursos via Gemini 3 Flash.",
   "requestFramePermissions": []
 }
