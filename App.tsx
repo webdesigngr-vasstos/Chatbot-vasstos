@@ -40,7 +40,6 @@ const VasstosLogo = ({ className }: { className?: string }) => (
 const App: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showInstallGuide, setShowInstallGuide] = useState(false);
-  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [isAdmin, setIsAdmin] = useState(() => localStorage.getItem('vasstos_admin_active') === 'true');
   const [activeTab, setActiveTab] = useState<'googlesites' | 'github' | 'code'>('googlesites');
   const [copied, setCopied] = useState(false);
@@ -56,7 +55,6 @@ const App: React.FC = () => {
 
   const [messages, setMessages] = useState<Message[]>([]);
 
-  // Inicializa mensagens quando o idioma muda
   useEffect(() => {
     const saved = localStorage.getItem(`vasstos_chat_history_${lang}`);
     if (saved) {
@@ -69,7 +67,7 @@ const App: React.FC = () => {
     } else {
       setMessages([{ id: 'welcome', role: Role.ASSISTANT, content: t.welcome, timestamp: new Date() }]);
     }
-  }, [lang]);
+  }, [lang, t.welcome]);
 
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -167,19 +165,27 @@ const App: React.FC = () => {
     }
   };
 
-  const prodSnippet = `<!-- Vasstos AI Chatbot Integration -->
+  const prodSnippet = `<!-- Vasstos Academy AI Chatbot -->
 <div id="root"></div>
 <script type="module">
   (function() {
-    const script = document.createElement('script');
-    script.type = 'module';
-    script.src = '${scriptUrl}';
-    document.head.appendChild(script);
+    const s = document.createElement('script');
+    s.type = 'module';
+    s.src = '${scriptUrl}';
+    document.head.appendChild(s);
   })();
 </script>
 <style>
-  #root { position: fixed; bottom: 0; right: 0; z-index: 999999; pointer-events: none; }
-  #root > * { pointer-events: auto; }
+  #root { 
+    position: fixed; 
+    bottom: 0; 
+    right: 0; 
+    z-index: 999999; 
+    pointer-events: none; 
+  }
+  #root > * { 
+    pointer-events: auto; 
+  }
 </style>`;
 
   const copyToClipboard = (code: string) => {
@@ -228,14 +234,14 @@ const App: React.FC = () => {
                           <ShieldCheck size={18} className="text-green-500" /> Guia Google Sites
                         </h4>
                         <ol className="space-y-4 text-[12px] text-slate-400">
-                          <li className="flex gap-4"><span className="bg-blue-600/20 text-blue-400 w-6 h-6 rounded-full flex items-center justify-center font-bold text-[10px] shrink-0">01</span> No editor do Google Sites, clique em 'Incorporar'.</li>
-                          <li className="flex gap-4"><span className="bg-blue-600/20 text-blue-400 w-6 h-6 rounded-full flex items-center justify-center font-bold text-[10px] shrink-0">02</span> Vá na aba 'Incorporar código'.</li>
-                          <li className="flex gap-4"><span className="bg-blue-600/20 text-blue-400 w-6 h-6 rounded-full flex items-center justify-center font-bold text-[10px] shrink-0">03</span> Cole o código ao lado e salve.</li>
-                          <li className="flex gap-4"><span className="bg-blue-600/20 text-blue-400 w-6 h-6 rounded-full flex items-center justify-center font-bold text-[10px] shrink-0">04</span> Redimensione o bloco para ocupar toda a lateral direita ou rodapé.</li>
+                          <li className="flex gap-4"><span className="bg-blue-600/20 text-blue-400 w-6 h-6 rounded-full flex items-center justify-center font-bold text-[10px] shrink-0">01</span> Clique em 'Incorporar' > 'Incorporar código'.</li>
+                          <li className="flex gap-4"><span className="bg-blue-600/20 text-blue-400 w-6 h-6 rounded-full flex items-center justify-center font-bold text-[10px] shrink-0">02</span> Cole o código ao lado e insira na página.</li>
+                          <li className="flex gap-4"><span className="bg-blue-600/20 text-blue-400 w-6 h-6 rounded-full flex items-center justify-center font-bold text-[10px] shrink-0">03</span> <b>Dica:</b> Arraste o bloco para que ele tenha pelo menos 400x600px de área no canto inferior.</li>
+                          <li className="flex gap-4"><span className="bg-blue-600/20 text-blue-400 w-6 h-6 rounded-full flex items-center justify-center font-bold text-[10px] shrink-0">04</span> Publique o site para ver as alterações.</li>
                         </ol>
                         <div className="pt-4">
                            <button onClick={() => setIsAdmin(false)} className="w-full py-4 bg-slate-800 hover:bg-red-600/10 hover:text-red-400 text-white text-[10px] font-black uppercase rounded-2xl border border-white/10 transition-all flex items-center justify-center gap-2">
-                            <Lock size={14} /> Sair do Modo Administrador
+                            <Lock size={14} /> Desativar Modo Admin
                           </button>
                         </div>
                       </div>
@@ -245,7 +251,7 @@ const App: React.FC = () => {
                             {prodSnippet}
                           </pre>
                           <button onClick={() => copyToClipboard(prodSnippet)} className="absolute top-6 right-6 p-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl shadow-2xl transition-all active:scale-95 flex items-center gap-2 text-[10px] font-bold uppercase">
-                            {copied ? <Check size={16}/> : <Copy size={16}/>} {copied ? 'Copiado' : 'Copiar Código'}
+                            {copied ? <Check size={16}/> : <Copy size={16}/>} {copied ? 'Copiado' : 'Copiar Snippet'}
                           </button>
                         </div>
                       </div>
@@ -259,8 +265,8 @@ const App: React.FC = () => {
                       <div className="w-20 h-20 bg-purple-600/20 rounded-full flex items-center justify-center mx-auto text-purple-400 border border-purple-500/30">
                         <Code2 size={40} />
                       </div>
-                      <h3 className="text-xl font-bold text-white">Integração via Tag Module</h3>
-                      <p className="text-sm text-slate-400 max-w-xl mx-auto">Use este script em qualquer site HTML, WordPress (Header scripts) ou Webflow. Ele injeta o chatbot de forma assíncrona sem afetar a performance do carregamento.</p>
+                      <h3 className="text-xl font-bold text-white">Integração Direta</h3>
+                      <p className="text-sm text-slate-400 max-w-xl mx-auto">Ideal para WordPress, Webflow ou sites estáticos.</p>
                       <div className="relative group text-left">
                         <pre className="bg-black/60 p-8 rounded-[2rem] border border-purple-500/30 font-mono text-[12px] text-purple-300 overflow-x-auto">
                           {`<script type="module" src="${scriptUrl}"></script>`}
@@ -318,7 +324,6 @@ const App: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-2">
-                {/* Language Switcher */}
                 <button 
                   onClick={toggleLanguage}
                   className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 text-[10px] font-black text-slate-300 transition-all uppercase tracking-widest"
