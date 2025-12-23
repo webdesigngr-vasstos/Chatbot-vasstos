@@ -14,12 +14,11 @@ import {
   Github,
   Monitor,
   Trash2,
-  FlaskConical,
   Lock,
   Unlock,
   ShieldCheck,
-  ExternalLink,
-  Code2
+  Code2,
+  Languages
 } from 'lucide-react';
 import { Role, Message, Language } from './types';
 import { geminiService } from './services/gemini';
@@ -50,24 +49,27 @@ const App: React.FC = () => {
   const [ghUser, setGhUser] = useState(() => localStorage.getItem('vasstos_gh_user') || 'vasstos-tech');
   const [ghRepo, setGhRepo] = useState(() => localStorage.getItem('vasstos_gh_repo') || 'Chatbot-vasstos');
   
-  const [lang, setLang] = useState<Language>('pt');
+  const [lang, setLang] = useState<Language>(() => (localStorage.getItem('vasstos_lang') as Language) || 'pt');
   const t = I18N[lang];
 
-  // URL final para produção
   const scriptUrl = `https://${ghUser}.github.io/${ghRepo}/assets/index.js`;
 
-  const [messages, setMessages] = useState<Message[]>(() => {
-    const saved = localStorage.getItem('vasstos_chat_history');
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  // Inicializa mensagens quando o idioma muda
+  useEffect(() => {
+    const saved = localStorage.getItem(`vasstos_chat_history_${lang}`);
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        return parsed.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) }));
+        setMessages(parsed.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) })));
       } catch (e) {
-        return [{ id: 'welcome', role: Role.ASSISTANT, content: t.welcome, timestamp: new Date() }];
+        setMessages([{ id: 'welcome', role: Role.ASSISTANT, content: t.welcome, timestamp: new Date() }]);
       }
+    } else {
+      setMessages([{ id: 'welcome', role: Role.ASSISTANT, content: t.welcome, timestamp: new Date() }]);
     }
-    return [{ id: 'welcome', role: Role.ASSISTANT, content: t.welcome, timestamp: new Date() }];
-  });
+  }, [lang]);
 
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -76,14 +78,21 @@ const App: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    localStorage.setItem('vasstos_chat_history', JSON.stringify(messages));
-  }, [messages]);
+    if (messages.length > 0) {
+      localStorage.setItem(`vasstos_chat_history_${lang}`, JSON.stringify(messages));
+    }
+  }, [messages, lang]);
 
   useEffect(() => {
     localStorage.setItem('vasstos_gh_user', ghUser);
     localStorage.setItem('vasstos_gh_repo', ghRepo);
     localStorage.setItem('vasstos_admin_active', isAdmin.toString());
-  }, [ghUser, ghRepo, isAdmin]);
+    localStorage.setItem('vasstos_lang', lang);
+  }, [ghUser, ghRepo, isAdmin, lang]);
+
+  const toggleLanguage = () => {
+    setLang(prev => prev === 'pt' ? 'en' : 'pt');
+  };
 
   const handleLogoClick = () => {
     const newClicks = logoClicks + 1;
@@ -154,7 +163,7 @@ const App: React.FC = () => {
   const clearHistory = () => {
     if (window.confirm(lang === 'pt' ? 'Limpar histórico de conversa?' : 'Clear chat history?')) {
       setMessages([{ id: 'welcome', role: Role.ASSISTANT, content: t.welcome, timestamp: new Date() }]);
-      localStorage.removeItem('vasstos_chat_history');
+      localStorage.removeItem(`vasstos_chat_history_${lang}`);
     }
   };
 
@@ -302,13 +311,22 @@ const App: React.FC = () => {
                 </div>
                 <div>
                   <h1 className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
-                    {VASSTOS_BRAND.name} <span className="text-[9px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/20 font-black uppercase tracking-widest">PRO</span>
+                    {VASSTOS_BRAND.name} <span className="text-[9px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/20 font-black uppercase tracking-widest">ACADEMY</span>
                   </h1>
                   <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">{t.liveSupport}</p>
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
+                {/* Language Switcher */}
+                <button 
+                  onClick={toggleLanguage}
+                  className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 text-[10px] font-black text-slate-300 transition-all uppercase tracking-widest"
+                >
+                  <Languages size={14} className="text-blue-500" />
+                  {lang}
+                </button>
+
                 {isAdmin && (
                   <button onClick={() => setShowInstallGuide(true)} className="p-3 hover:bg-blue-600/10 rounded-xl text-blue-500 hover:text-blue-400 transition-all border border-blue-500/20" title="Configurar"><Settings size={20} /></button>
                 )}

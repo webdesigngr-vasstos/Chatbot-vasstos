@@ -13,65 +13,65 @@ export const VASSTOS_BRAND = {
 
 export const I18N = {
   en: {
-    tagline: "Empowering Digital Evolution",
-    description: "Vasstos is a premier technology solutions provider specializing in digital transformation, cloud infrastructure, AI integration, and enterprise software development.",
+    tagline: "Excellence in Professional Training",
+    description: "Vasstos Academy is a premier professional education center focused on empowering tech talent through specialized certifications, intensive bootcamps, and corporate training solutions.",
     services: [
-      "Digital Transformation Strategy",
-      "Cloud Native Infrastructure",
-      "AI & Machine Learning Integration",
-      "Custom Software Engineering",
-      "Cybersecurity Compliance",
-      "Managed IT Services"
+      "Professional Certifications (Cloud & Dev)",
+      "Tech Bootcamps & Specializations",
+      "In-Company Corporate Training",
+      "Career Mentoring & Coaching",
+      "Executive Tech Leadership Programs",
+      "Custom Educational Roadmaps"
     ],
-    welcome: "Greetings from Vasstos. I am your AI Concierge. How can I facilitate your digital evolution today?",
-    placeholder: "Type your message here...",
-    systemOnline: "Concierge Online",
-    concierge: "Concierge",
-    liveSupport: "Intelligent Business Support",
-    sources: "Official Documentation",
-    typing: "Concierge is thinking",
-    error: "I encountered a minor synchronization issue. Please repeat your last message.",
+    welcome: "Welcome to Vasstos Academy. I am your Academic Advisor. Ready to accelerate your professional journey today?",
+    placeholder: "Ask about courses, tracks or certifications...",
+    systemOnline: "Advisor Online",
+    concierge: "Advisor",
+    liveSupport: "Academic & Career Support",
+    sources: "Educational Resources",
+    typing: "Advisor is checking the syllabus",
+    error: "I lost my connection to the campus. Could you repeat that?",
     quickPrompts: [
-      "Our Services",
-      "Cloud Strategy",
-      "AI Consulting",
-      "Speak to Expert"
+      "Available Courses",
+      "Corporate Training",
+      "Certifications",
+      "Career Path"
     ],
-    footer: "Secure Gateway • Vasstos AI v3",
+    footer: "Secure Learning Gateway • Vasstos Academy v3",
     instantTest: "Production Setup",
     testInstructions: "This code is ready for your website. It automatically handles container creation.",
     simulateUI: "Test Live",
-    simulationMsg: "Production protocol active. This illustrates our grounded response system with live business references."
+    simulationMsg: "Academy protocol active. Demonstrating grounded responses for educational inquiries."
   },
   pt: {
-    tagline: "Impulsionando a Evolução Digital",
-    description: "A Vasstos é uma consultoria de elite em soluções tecnológicas, especializada em transformação digital, infraestrutura em nuvem, IA e engenharia de software.",
+    tagline: "Excelência em Formação Profissional",
+    description: "A Academia Vasstos é um centro de elite em educação profissional, focado em capacitar talentos tecnológicos através de certificações especializadas, bootcamps intensivos e soluções de treinamento corporativo.",
     services: [
-      "Estratégia de Transformação Digital",
-      "Infraestrutura Cloud Native",
-      "Integração de IA e Machine Learning",
-      "Engenharia de Software de Alta Performance",
-      "Cibersegurança e Governança",
-      "Serviços Gerenciados de TI"
+      "Certificações Profissionais (Cloud & Dev)",
+      "Bootcamps e Especializações Tech",
+      "Treinamentos Corporativos In-Company",
+      "Mentoria e Coaching de Carreira",
+      "Programas de Liderança Executiva Tech",
+      "Trilhas Educacionais Personalizadas"
     ],
-    welcome: "Saudações da Vasstos. Sou seu Concierge de IA. Como posso impulsionar sua jornada tecnológica hoje?",
-    placeholder: "Escreva sua mensagem aqui...",
-    systemOnline: "Concierge Ativo",
-    concierge: "Concierge",
-    liveSupport: "Suporte Inteligente Corporativo",
-    sources: "Documentação Oficial",
-    typing: "Concierge está processando",
-    error: "Houve uma pequena instabilidade na conexão. Por favor, reenvie sua mensagem.",
+    welcome: "Bem-vindo à Academia Vasstos. Sou seu Consultor Acadêmico. Pronto para acelerar sua jornada profissional hoje?",
+    placeholder: "Pergunte sobre cursos, trilhas ou certificações...",
+    systemOnline: "Consultor Online",
+    concierge: "Consultor",
+    liveSupport: "Suporte Acadêmico e de Carreira",
+    sources: "Recursos Educacionais",
+    typing: "Consultor está consultando a grade",
+    error: "Houve um problema na conexão com o campus. Pode repetir?",
     quickPrompts: [
-      "Nossos Serviços",
-      "Estratégia Nuvem",
-      "Consultoria em IA",
-      "Falar com Especialista"
+      "Cursos Disponíveis",
+      "Treinamento In-Company",
+      "Certificações",
+      "Trilhas de Carreira"
     ],
-    footer: "Conexão Segura • Vasstos AI v3",
+    footer: "Portal de Aprendizado Seguro • Academia Vasstos v3",
     instantTest: "Setup de Produção",
     testInstructions: "Este código está pronto para o seu site. Ele cria automaticamente o container necessário.",
     simulateUI: "Testar ao Vivo",
-    simulationMsg: "Protocolo de produção ativo. Isto exemplifica nosso sistema de resposta segura com referências corporativas reais."
+    simulationMsg: "Protocolo de Academia ativo. Demonstrando respostas fundamentadas para consultas educacionais."
   }
 };
