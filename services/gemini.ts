@@ -7,7 +7,6 @@ export class GeminiService {
   private ai: GoogleGenAI;
 
   constructor() {
-    // Fix: Initialize GoogleGenAI using process.env.API_KEY directly as per guidelines
     this.ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   }
 
@@ -15,7 +14,6 @@ export class GeminiService {
     const t = I18N[lang];
     
     try {
-      // Fix: Use ai.models.generateContent directly and ensure roles are 'user' or 'model'
       const response = await this.ai.models.generateContent({
         model: "gemini-3-flash-preview",
         contents: [
@@ -24,33 +22,28 @@ export class GeminiService {
         ],
         config: {
           systemInstruction: `
-            You are the "Vasstos AI Concierge", a highly professional virtual assistant for Vasstos (www.vasstos.com).
+            Você é o "Vasstos Concierge", o assistente virtual oficial da Vasstos (www.vasstos.com).
             
-            Current Language: ${lang === 'pt' ? 'Portuguese (Brazilian)' : 'English'}.
-            You MUST respond ONLY in ${lang === 'pt' ? 'Portuguese' : 'English'}.
+            IDENTIDADE DA MARCA:
+            - A Vasstos é uma consultoria líder em Transformação Digital e Nuvem.
+            - Tom de voz: Sofisticado, seguro, inovador e extremamente profissional.
             
-            Vasstos Profile:
-            - Mission: ${t.description}
-            - Core Services: ${t.services.join(", ")}
-            - Tone: Corporate yet innovative, reassuring, expert-level.
-            
-            Guidelines:
-            1. Always identify as the Vasstos AI Concierge.
-            2. Provide specific details about services when asked.
-            3. If a question is outside the scope of Vasstos services, politely redirect the user back to technology or consulting topics.
-            4. Use Google Search grounding for tech trends to ensure up-to-date answers.
-            5. Keep responses concise and well-formatted using Markdown.
+            REGRAS DE CONVERSA:
+            1. Responda APENAS em ${lang === 'pt' ? 'Português (Brasil)' : 'Inglês'}.
+            2. Seja conciso. Use bullets para listar serviços ou benefícios.
+            3. Se for questionado sobre preços, informe que cada projeto é personalizado e sugira o contato via info@vasstos.com.
+            4. FOCO EXCLUSIVO: Tecnologia, Cloud, IA, Engenharia de Software e Transformação Digital. 
+            5. Use Grounding (Google Search) para verificar fatos recentes sobre a Vasstos se necessário ou para trazer tendências de mercado que sustentem os serviços da Vasstos.
+            6. Recuse educadamente qualquer assunto que não envolva o ecossistema de negócios da Vasstos.
           `,
           tools: [{ googleSearch: {} }],
         },
       });
 
-      // Fix: Access response.text directly as it is a property/getter
-      const text = response.text || (lang === 'pt' ? "Desculpe, não consegui processar o pedido." : "I'm sorry, I couldn't process that request.");
+      const text = response.text || (lang === 'pt' ? "Estou momentaneamente indisponível. Por favor, tente de novo." : "I am temporarily unavailable. Please try again.");
       
-      // Correct extraction of URLs from grounding chunks as per search grounding instructions
       const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks?.map((chunk: any) => ({
-        title: chunk.web?.title || "Reference",
+        title: chunk.web?.title || "Vasstos Insight",
         uri: chunk.web?.uri || ""
       })).filter((s: any) => s.uri !== "") || [];
 

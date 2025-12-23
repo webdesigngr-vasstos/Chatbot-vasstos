@@ -18,60 +18,60 @@ export const I18N = {
     services: [
       "Digital Transformation Strategy",
       "Cloud Native Infrastructure",
-      "Artificial Intelligence & Machine Learning",
+      "AI & Machine Learning Integration",
       "Custom Software Engineering",
       "Cybersecurity Compliance",
-      "IT Managed Services"
+      "Managed IT Services"
     ],
-    welcome: "Welcome to Vasstos. I am your AI Concierge. How can I assist you with our digital solutions today?",
-    placeholder: "Ask me anything about Vasstos solutions...",
-    systemOnline: "System Online",
+    welcome: "Greetings from Vasstos. I am your AI Concierge. How can I facilitate your digital evolution today?",
+    placeholder: "Type your inquiry here...",
+    systemOnline: "Concierge Online",
     concierge: "Concierge",
-    liveSupport: "Live Intelligent Support",
-    sources: "Sources",
-    typing: "Concierge is typing",
-    error: "I'm sorry, I'm having trouble connecting to my knowledge base right now. Please try again in a moment.",
+    liveSupport: "Intelligent Business Support",
+    sources: "Knowledge Base",
+    typing: "Concierge is thinking",
+    error: "I encountered a minor synchronization issue. Please repeat your last message.",
     quickPrompts: [
-      "What services does Vasstos offer?",
-      "Tell me about cloud solutions.",
-      "How can Vasstos help with AI?",
-      "How do I contact support?"
+      "Our Services",
+      "Cloud Strategy",
+      "AI Consulting",
+      "Contact Vasstos"
     ],
-    footer: "Powered by Gemini 3 Flash • Secure & Grounded Results",
-    instantTest: "Instant Test",
-    testInstructions: "Run this in your browser console on the target site to preview the bot live.",
-    simulateUI: "Simulate UI Response",
-    simulationMsg: "This is a simulated response to test layout and animations."
+    footer: "Secure Vasstos Gateway • Gemini v3 Engine",
+    instantTest: "Developer Console",
+    testInstructions: "Execute this script in your browser console to preview the live integration.",
+    simulateUI: "Test UI Flow",
+    simulationMsg: "Protocol test complete. This illustrates our grounded response system with interactive references."
   },
   pt: {
     tagline: "Impulsionando a Evolução Digital",
-    description: "A Vasstos é uma provedora líder de soluções tecnológicas, especializada em transformação digital, infraestrutura em nuvem, integração de IA e desenvolvimento de software empresarial.",
+    description: "A Vasstos é uma consultoria de elite em soluções tecnológicas, especializada em transformação digital, infraestrutura em nuvem, IA e engenharia de software.",
     services: [
       "Estratégia de Transformação Digital",
       "Infraestrutura Cloud Native",
-      "Inteligência Artificial e Machine Learning",
-      "Engenharia de Software Personalizada",
-      "Conformidade em Cibersegurança",
-      "Serviços de TI Gerenciados"
+      "Integração de IA e Machine Learning",
+      "Engenharia de Software de Alta Performance",
+      "Cibersegurança e Governança",
+      "Serviços Gerenciados de TI"
     ],
-    welcome: "Bem-vindo à Vasstos. Eu sou seu Concierge de IA. Como posso ajudar você com nossas soluções digitais hoje?",
-    placeholder: "Pergunte qualquer coisa sobre as soluções da Vasstos...",
-    systemOnline: "Sistema Online",
+    welcome: "Saudações da Vasstos. Sou seu Concierge de IA. Como posso impulsionar sua jornada tecnológica hoje?",
+    placeholder: "Escreva sua mensagem aqui...",
+    systemOnline: "Concierge Ativo",
     concierge: "Concierge",
-    liveSupport: "Suporte Inteligente em Tempo Real",
-    sources: "Fontes",
-    typing: "Concierge está digitando",
-    error: "Desculpe, estou com problemas para acessar minha base de conhecimento agora. Por favor, tente novamente em um momento.",
+    liveSupport: "Suporte Inteligente Corporativo",
+    sources: "Base de Conhecimento",
+    typing: "Concierge está processando",
+    error: "Houve uma pequena instabilidade na conexão. Por favor, reenvie sua mensagem.",
     quickPrompts: [
-      "Quais serviços a Vasstos oferece?",
-      "Conte-me sobre soluções em nuvem.",
-      "Como a Vasstos ajuda com IA?",
-      "Como entro em contato com o suporte?"
+      "Nossos Serviços",
+      "Estratégia Nuvem",
+      "Consultoria em IA",
+      "Falar com Vasstos"
     ],
-    footer: "Desenvolvido por Gemini 3 Flash • Resultados Seguros e Grounded",
-    instantTest: "Teste Instantâneo",
-    testInstructions: "Execute isto no console do seu navegador no site de destino para ver o bot ao vivo agora.",
-    simulateUI: "Simular Resposta (Teste de UI)",
-    simulationMsg: "Esta é uma resposta simulada para testar o layout, as fontes e as animações do chat."
+    footer: "Vasstos Secure Gateway • Gemini v3 Flash",
+    instantTest: "Console do Desenvolvedor",
+    testInstructions: "Execute este script no console do seu navegador para testar a integração ao vivo.",
+    simulateUI: "Simular Fluxo",
+    simulationMsg: "Teste de protocolo concluído. Isto exemplifica nosso sistema de resposta segura com referências dinâmicas."
   }
 };
